@@ -5,6 +5,10 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 const destinationsRouter = require('./routes/destinationsRoutes');
 const listsrouter = require('./routes/listsRoutes');
+const { authenticateToken, authorizeAdmin } = require('./middleware/authMiddleware');
+const authRoutes =  require('./routes/authRoutes');
+const listsRouter = require('./routes/listsRoutes');
+
 
 const app = express();
 
@@ -25,5 +29,7 @@ app.use(express.static(path.join(__dirname, '../client')));
 //Mounting Routes
 app.use('/api/destinations', destinationsRouter);
 app.use('/api/lists', listsRouter);
+app.use('/api/open', authRoutes);
+
 
 module.exports = app;
