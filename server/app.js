@@ -3,7 +3,8 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
-//const destinationsRouter = require('./routes/destinationRoutes'); // Assuming you organize routes
+const destinationsRouter = require('./routes/destinationsRoutes');
+const listsrouter = require('./routes/listsRoutes');
 
 const app = express();
 
@@ -21,7 +22,8 @@ app.use(limiter);
 // Static file serving for client
 app.use(express.static(path.join(__dirname, '../client')));
 
-// Routes
-//app.use('/', destinationsRouter);
+//Mounting Routes
+app.use('/api/destinations', destinationsRouter);
+app.use('/api/lists', listsRouter);
 
 module.exports = app;

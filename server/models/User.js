@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['active', 'disabled'],
-    default: 'active', // Fixed default value
+    default: 'active', 
   },
   createdAt: {
     type: Date,
