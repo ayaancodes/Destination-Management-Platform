@@ -15,6 +15,83 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
+
+//Route: Get all public lists with pagination
+listsRouter.get('/public-lists', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const publicLists = await List.find({ visibility: 'public' })
+      .populate('userId', 'nickname')
+      .skip(skip)
+      .limit(limit);
+
+    const totalPublicLists = await List.countDocuments({ visibility: 'public' });
+
+    res.json({
+      lists: publicLists,
+      currentPage: page,
+      totalPages: Math.ceil(totalPublicLists / limit),
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+// Route: Rate a public list
+listsRouter.post(
+  '/:id/rate',
+  [
+    param('id').isMongoId().withMessage('Invalid list ID.'),
+    body('rating').isInt({ min: 1, max: 5 }).withMessage('Rating must be an integer between 1 and 5.'),
+  ],
+  handleValidationErrors,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { rating } = req.body;
+      const userId = req.user.userId; // Extract authenticated user ID
+
+      // Find the list
+      const list = await List.findById(id);
+
+      if (!list) {
+        return res.status(404).json({ error: 'List not found.' });
+      }
+
+      if (list.visibility !== 'public') {
+        return res.status(403).json({ error: 'You can only rate public lists.' });
+      }
+
+      // Check if the user has already rated
+      const existingRating = list.ratings.find(r => r.userId.toString() === userId);
+
+      if (existingRating) {
+        // Update the existing rating
+        existingRating.rating = rating;
+      } else {
+        // Add a new rating
+        list.ratings.push({ userId, rating });
+      }
+
+      // Recalculate average rating
+      const totalRatings = list.ratings.reduce((sum, r) => sum + r.rating, 0);
+      list.averageRating = totalRatings / list.ratings.length;
+
+      await list.save();
+
+      res.json({ message: 'Rating submitted successfully.', list });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+  }
+);
+
+
 // Route: Create a new list
 listsRouter.post(
   '/',
@@ -145,5 +222,9 @@ listsRouter.get(
     }
   }
 );
+
+
+
+
 
 module.exports = listsRouter;
