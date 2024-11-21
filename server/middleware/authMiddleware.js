@@ -1,27 +1,24 @@
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../config/dotenv');
+const JWT_SECRET = require('../config/dotenv');
 
 //Middleware to verify JWT
-const authenticateToken = (req, res, next) =>{
+const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-
-    //Extract token from header
-    const token = authHeader && authHeader.split('')[1];
-    if(!token){
-        return res.status(401).json({
-            error: 'Access denied. No token provided.'
-        });
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) {
+        console.log('No token provided');
+        return res.status(403).json({ error: 'Access denied. No token provided.' });
     }
 
-    try{
-        //Verify Token
-        const decoded = jwt.verify(token, JWT_SECRET);
-        req.user = decoded; //Attach decoded payload to request object
+    try {
+        console.log('Token:', token);
+        console.log('JWT_SECRET:', process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
         next();
-    }catch(error){
-        res.status(403).json({
-            error: 'Invalid token.'
-        });
+    } catch (err) {
+        console.error('Token verification error:', err.message);
+        return res.status(403).json({ error: 'Invalid token.' });
     }
 };
 

@@ -1,7 +1,10 @@
 const express = require('express');
 const { body, param, validationResult } = require('express-validator');
+const { authenticateToken } = require('../middleware/authMiddleware');
+
 
 const listsRouter = express.Router();
+listsRouter.use(authenticateToken); // Apply middleware to all routes
 
 
 // Helper function to handle validation errors
