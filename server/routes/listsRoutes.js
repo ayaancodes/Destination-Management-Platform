@@ -95,39 +95,73 @@ listsRouter.post(
 listsRouter.post(
   '/:id/review',
   [
-      param('id').isMongoId().withMessage('Invalid list ID.'),
-      body('comment').isString().withMessage('Review comment must be a string.'),
+    param('id').isMongoId().withMessage('Invalid list ID.'),
+    body('comment').isString().withMessage('Review comment must be a string.'),
   ],
   handleValidationErrors,
   async (req, res) => {
-      try {
-          const { id } = req.params;
-          const { comment } = req.body;
-          const userId = req.user.userId;
+    try {
+      const { id } = req.params;
+      const { comment } = req.body;
+      const userId = req.user.userId;
 
-          const list = await List.findById(id);
-          if (!list) {
-              return res.status(404).json({ error: 'List not found.' });
-          }
-
-          if (list.visibility !== 'public') {
-              return res.status(403).json({ error: 'Cannot review a private list.' });
-          }
-
-          // Add the review
-          const review = { userId, comment };
-          list.reviews.push(review);
-
-          // Save the list
-          await list.save();
-
-          res.status(201).json({ message: 'Review added successfully.', review });
-      } catch (error) {
-          console.error(error.message);
-          res.status(500).json({ error: 'Internal server error', details: error.message });
+      const list = await List.findById(id);
+      if (!list) {
+        return res.status(404).json({ error: 'List not found.' });
       }
+
+      if (list.visibility !== 'public') {
+        return res.status(403).json({ error: 'Cannot review a private list.' });
+      }
+
+      // Add the review
+      const review = { userId, comment };
+      list.reviews.push(review);
+
+      // Save the list
+      await list.save();
+
+      res.status(201).json({ message: 'Review added successfully.', review });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
   }
 );
+
+//Route: Search for public lists given a query
+listsRouter.get('/search', async (req, res) => {
+  const { query } = req.query;
+
+  // Check if the query parameter is provided
+  if (!query) {
+    return res.status(400).json({ error: 'Query parameter is required.' });
+  }
+
+  try {
+    // Search criteria for public lists only
+    const searchCriteria = {
+      visibility: 'public', // Ensure only public lists are included
+      name: { $regex: query, $options: 'i' }, // Case-insensitive search on list name
+    };
+
+    // Find matching lists and populate creator nickname
+    const results = await List.find(searchCriteria).populate('userId', 'nickname');
+
+    // Handle case where no lists match the criteria
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'No public lists found matching the criteria.' });
+    }
+
+    // Send successful response
+    res.status(200).json({ results });
+  } catch (error) {
+    // Handle server error
+    console.error(error.message);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
 
 //Route: Fetch all reviews for a specific list
 listsRouter.get(
@@ -135,20 +169,20 @@ listsRouter.get(
   param('id').isMongoId().withMessage('Invalid list ID.'),
   handleValidationErrors,
   async (req, res) => {
-      try {
-          const { id } = req.params;
+    try {
+      const { id } = req.params;
 
-          const list = await List.findById(id).populate('reviews.userId', 'nickname');
-          if (!list) {
-              return res.status(404).json({ error: 'List not found.' });
-          }
-
-
-          res.json({ reviews: list.reviews });
-      } catch (error) {
-          console.error(error.message);
-          res.status(500).json({ error: 'Internal server error', details: error.message });
+      const list = await List.findById(id).populate('reviews.userId', 'nickname');
+      if (!list) {
+        return res.status(404).json({ error: 'List not found.' });
       }
+
+
+      res.json({ reviews: list.reviews });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
   }
 );
 
@@ -156,41 +190,41 @@ listsRouter.get(
 listsRouter.put(
   '/:id/review',
   [
-      param('id').isMongoId().withMessage('Invalid list ID.'),
-      body('comment').isString().withMessage('Review comment must be a string.'),
+    param('id').isMongoId().withMessage('Invalid list ID.'),
+    body('comment').isString().withMessage('Review comment must be a string.'),
   ],
   handleValidationErrors,
   async (req, res) => {
-      try {
-          const { id } = req.params;
-          const { comment } = req.body;
-          const userId = req.user.userId;
+    try {
+      const { id } = req.params;
+      const { comment } = req.body;
+      const userId = req.user.userId;
 
-          const list = await List.findById(id);
-          if (!list) {
-              return res.status(404).json({ error: 'List not found.' });
-          }
-
-          if (list.visibility !== 'public') {
-              return res.status(403).json({ error: 'Cannot update a review for a private list.' });
-          }
-
-          const review = list.reviews.find(r => r.userId.toString() === userId);
-          if (!review) {
-              return res.status(404).json({ error: 'Review not found.' });
-          }
-
-          // Update the review
-          review.comment = comment;
-          review.createdAt = Date.now();
-
-          await list.save();
-
-          res.json({ message: 'Review updated successfully.', review });
-      } catch (error) {
-          console.error(error.message);
-          res.status(500).json({ error: 'Internal server error', details: error.message });
+      const list = await List.findById(id);
+      if (!list) {
+        return res.status(404).json({ error: 'List not found.' });
       }
+
+      if (list.visibility !== 'public') {
+        return res.status(403).json({ error: 'Cannot update a review for a private list.' });
+      }
+
+      const review = list.reviews.find(r => r.userId.toString() === userId);
+      if (!review) {
+        return res.status(404).json({ error: 'Review not found.' });
+      }
+
+      // Update the review
+      review.comment = comment;
+      review.createdAt = Date.now();
+
+      await list.save();
+
+      res.json({ message: 'Review updated successfully.', review });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
   }
 );
 
@@ -201,34 +235,34 @@ listsRouter.delete(
   param('id').isMongoId().withMessage('Invalid list ID.'),
   handleValidationErrors,
   async (req, res) => {
-      try {
-          const { id } = req.params;
-          const userId = req.user.userId;
+    try {
+      const { id } = req.params;
+      const userId = req.user.userId;
 
-          const list = await List.findById(id);
-          if (!list) {
-              return res.status(404).json({ error: 'List not found.' });
-          }
-
-          if (list.visibility !== 'public') {
-              return res.status(403).json({ error: 'Cannot delete a review for a private list.' });
-          }
-
-          const reviewIndex = list.reviews.findIndex(r => r.userId.toString() === userId);
-          if (reviewIndex === -1) {
-              return res.status(404).json({ error: 'Review not found.' });
-          }
-
-          // Remove the review
-          list.reviews.splice(reviewIndex, 1);
-
-          await list.save();
-
-          res.json({ message: 'Review deleted successfully.' });
-      } catch (error) {
-          console.error(error.message);
-          res.status(500).json({ error: 'Internal server error', details: error.message });
+      const list = await List.findById(id);
+      if (!list) {
+        return res.status(404).json({ error: 'List not found.' });
       }
+
+      if (list.visibility !== 'public') {
+        return res.status(403).json({ error: 'Cannot delete a review for a private list.' });
+      }
+
+      const reviewIndex = list.reviews.findIndex(r => r.userId.toString() === userId);
+      if (reviewIndex === -1) {
+        return res.status(404).json({ error: 'Review not found.' });
+      }
+
+      // Remove the review
+      list.reviews.splice(reviewIndex, 1);
+
+      await list.save();
+
+      res.json({ message: 'Review deleted successfully.' });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
   }
 );
 
@@ -340,6 +374,8 @@ listsRouter.delete(
     }
   }
 );
+
+
 
 // Route: Get details for a list by ID
 listsRouter.get(
