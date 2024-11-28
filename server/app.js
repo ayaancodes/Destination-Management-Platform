@@ -8,6 +8,8 @@ const listsrouter = require('./routes/listsRoutes');
 const { authenticateToken, authorizeAdmin } = require('./middleware/authMiddleware');
 const authRoutes =  require('./routes/authRoutes');
 const listsRouter = require('./routes/listsRoutes');
+const adminRouter = require('./routes/adminRoutes');
+
 
 
 const app = express();
@@ -29,7 +31,8 @@ app.use(express.static(path.join(__dirname, '../client')));
 //Mounting Routes
 app.use('/api/destinations', destinationsRouter);
 app.use('/api/lists', listsRouter);
-app.use('/api/open', authRoutes);
+app.use('/api', authRoutes);
+app.use('/api/admin', authenticateToken, adminRouter);
 
 
 module.exports = app;

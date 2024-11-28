@@ -2,29 +2,29 @@ const mongoose = require('mongoose');
 
 const listSchema = new mongoose.Schema({
     userId: {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     name: {
-        type: String, 
-        required: true, 
+        type: String,
+        required: true,
         unique: true
     },
     description: {
         type: String,
-    }, 
+    },
     destinationIds: [{
-        type: mongoose.Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Destination'
     }],
     visibility: {
-        type: String, 
+        type: String,
         enum: ['public', 'private'],
         default: 'private'
     },
     averageRating: {
-        type: Number, 
+        type: Number,
         default: 0
     },
     ratings: [{
@@ -35,18 +35,19 @@ const listSchema = new mongoose.Schema({
         {
             userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
             comment: { type: String, required: true },
+            hidden: { type: Boolean, default: false }, // Added field for hiding reviews
             createdAt: { type: Date, default: Date.now },
         }
     ],
     lastModified: {
-        type: Date, 
+        type: Date,
         default: Date.now
     },
     createdAt: {
-        type: Date, 
+        type: Date,
         default: Date.now
-    } 
-})
+    }
+});
 
 const List = mongoose.model('List', listSchema);
 module.exports = List;

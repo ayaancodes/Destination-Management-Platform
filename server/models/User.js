@@ -24,6 +24,13 @@ const userSchema = new mongoose.Schema({
     enum: ['active', 'disabled'],
     default: 'active', 
   },
+  isVerified: {
+    type: Boolean,
+    default: false, // Not verified by default
+  },
+  verificationToken: {
+    type: String, // Token to verify email
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -34,5 +41,5 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const User = mongoose.model('User', userSchema); // Fixed schema reference
+const User = mongoose.model('User', userSchema); 
 module.exports = User;

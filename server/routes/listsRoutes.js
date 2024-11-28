@@ -2,6 +2,8 @@ const express = require('express');
 const { body, param, validationResult } = require('express-validator');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const List = require('../models/List'); // MongoDB List model
+const Review = require('../models/Review'); // MongoDB List model
+
 
 const listsRouter = express.Router();
 listsRouter.use(authenticateToken); // Apply middleware to all routes
@@ -91,7 +93,7 @@ listsRouter.post(
   }
 );
 
-//Route: Users can submit a review for a public list
+// Route: Users can submit a review for a public list
 listsRouter.post(
   '/:id/review',
   [
@@ -114,20 +116,26 @@ listsRouter.post(
         return res.status(403).json({ error: 'Cannot review a private list.' });
       }
 
-      // Add the review
-      const review = { userId, comment };
-      list.reviews.push(review);
+      // Add the new review
+      const newReview = {
+        userId,
+        comment,
+        createdAt: Date.now(),
+        hidden: false, // Ensure the review is public by default
+      };
+      list.reviews.push(newReview);
 
-      // Save the list
       await list.save();
 
-      res.status(201).json({ message: 'Review added successfully.', review });
+      res.status(201).json({ message: 'Review added successfully.', review: newReview });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: 'Internal server error', details: error.message });
     }
   }
 );
+
+
 
 //Route: Search for public lists given a query
 listsRouter.get('/search', async (req, res) => {
@@ -163,7 +171,7 @@ listsRouter.get('/search', async (req, res) => {
 });
 
 
-//Route: Fetch all reviews for a specific list
+// Route: Fetch all visible reviews for a specific list
 listsRouter.get(
   '/:id/reviews',
   param('id').isMongoId().withMessage('Invalid list ID.'),
@@ -172,13 +180,16 @@ listsRouter.get(
     try {
       const { id } = req.params;
 
-      const list = await List.findById(id).populate('reviews.userId', 'nickname');
+      // Fetch the list and filter out hidden reviews
+      const list = await List.findById(id);
       if (!list) {
         return res.status(404).json({ error: 'List not found.' });
       }
 
+      // Filter visible reviews
+      const visibleReviews = list.reviews.filter(review => !review.hidden);
 
-      res.json({ reviews: list.reviews });
+      res.json({ reviews: visibleReviews });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: 'Internal server error', details: error.message });
@@ -186,7 +197,9 @@ listsRouter.get(
   }
 );
 
-//Route: Update a review
+
+
+// Route: Update a review
 listsRouter.put(
   '/:id/review',
   [
@@ -203,10 +216,6 @@ listsRouter.put(
       const list = await List.findById(id);
       if (!list) {
         return res.status(404).json({ error: 'List not found.' });
-      }
-
-      if (list.visibility !== 'public') {
-        return res.status(403).json({ error: 'Cannot update a review for a private list.' });
       }
 
       const review = list.reviews.find(r => r.userId.toString() === userId);
@@ -229,7 +238,8 @@ listsRouter.put(
 );
 
 
-//Delete a review
+
+// Route: Delete a review
 listsRouter.delete(
   '/:id/review',
   param('id').isMongoId().withMessage('Invalid list ID.'),
@@ -244,10 +254,6 @@ listsRouter.delete(
         return res.status(404).json({ error: 'List not found.' });
       }
 
-      if (list.visibility !== 'public') {
-        return res.status(403).json({ error: 'Cannot delete a review for a private list.' });
-      }
-
       const reviewIndex = list.reviews.findIndex(r => r.userId.toString() === userId);
       if (reviewIndex === -1) {
         return res.status(404).json({ error: 'Review not found.' });
@@ -255,7 +261,6 @@ listsRouter.delete(
 
       // Remove the review
       list.reviews.splice(reviewIndex, 1);
-
       await list.save();
 
       res.json({ message: 'Review deleted successfully.' });
@@ -267,6 +272,7 @@ listsRouter.delete(
 );
 
 
+
 // Route: Create a new list
 listsRouter.post(
   '/',
@@ -274,7 +280,7 @@ listsRouter.post(
     body('name').isString().withMessage('List name must be a string.'),
     body('description').optional().isString(),
     body('destinationIds').optional().isArray(),
-    body('visibility').optional().isIn(['public', 'private']),
+    body('visibility').optional().customSanitizer(value => value.toLowerCase()).isIn(['public', 'private']),
   ],
   handleValidationErrors,
   async (req, res) => {
