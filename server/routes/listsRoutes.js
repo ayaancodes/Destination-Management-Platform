@@ -2,7 +2,6 @@ const express = require('express');
 const { body, param, validationResult } = require('express-validator');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const List = require('../models/List'); // MongoDB List model
-const Review = require('../models/Review'); // MongoDB List model
 
 
 const listsRouter = express.Router();
@@ -258,7 +257,6 @@ listsRouter.delete(
       if (reviewIndex === -1) {
         return res.status(404).json({ error: 'Review not found.' });
       }
-
       // Remove the review
       list.reviews.splice(reviewIndex, 1);
       await list.save();
@@ -270,7 +268,6 @@ listsRouter.delete(
     }
   }
 );
-
 
 
 // Route: Create a new list
