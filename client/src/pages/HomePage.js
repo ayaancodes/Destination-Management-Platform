@@ -7,7 +7,8 @@ const HomePage = () => {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ email: "", password: "", nickname: "" });
   const [authError, setAuthError] = useState("");
-  const [verificationLink, setVerificationLink] = useState("");
+  const [verificationLink, setVerificationLink] = useState(""); // Verification link from login
+  const [signupVerificationLink, setSignupVerificationLink] = useState(""); // For signup flow
   const [emailVerified, setEmailVerified] = useState(false);
   const navigate = useNavigate();
 
@@ -29,7 +30,15 @@ const HomePage = () => {
       localStorage.setItem("token", response.data.token);
       navigate("/dashboard");
     } catch (error) {
-      setAuthError(error.response?.data?.error || "Login failed.");
+      if (error.response?.status === 403) {
+        const data = error.response.data;
+        setAuthError(data.error);
+        if (data.verificationLink) {
+          setVerificationLink(data.verificationLink); // Store verification link for unverified users
+        }
+      } else {
+        setAuthError(error.response?.data?.error || "Login failed.");
+      }
     }
   };
 
@@ -38,7 +47,7 @@ const HomePage = () => {
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:3000/api/open/register", signupData);
-      setVerificationLink(response.data.verificationLink); // Store the verification link
+      setSignupVerificationLink(response.data.verificationLink); // Store verification link for signup
       setAuthError("");
     } catch (error) {
       setAuthError(error.response?.data?.error || "Signup failed.");
@@ -46,11 +55,10 @@ const HomePage = () => {
   };
 
   // Handle email verification
-  const handleEmailVerification = async () => {
+  const handleEmailVerification = async (token) => {
     try {
-      const token = verificationLink.split("/").pop(); // Extract token from the link
       const response = await axios.get(`http://localhost:3000/api/verify-email/${token}`);
-      setEmailVerified(true); // Set the email as verified
+      setEmailVerified(true); // Set email as verified
       alert(response.data.message); // Notify the user
     } catch (error) {
       setAuthError(error.response?.data?.error || "Email verification failed.");
@@ -89,6 +97,15 @@ const HomePage = () => {
             />
             <button type="submit">Login</button>
           </form>
+
+          {verificationLink && (
+            <div className="verification-section">
+              <p>Your email is not verified. Please verify it to continue.</p>
+              <button onClick={() => handleEmailVerification(verificationLink.split("/").pop())}>
+                Verify Email
+              </button>
+            </div>
+          )}
         </section>
 
         <section className="signup-section">
@@ -121,10 +138,12 @@ const HomePage = () => {
             <button type="submit">Signup</button>
           </form>
 
-          {verificationLink && (
+          {signupVerificationLink && (
             <div className="verification-section">
               <p>A verification link has been sent to your email.</p>
-              <button onClick={handleEmailVerification}>Verify Email</button>
+              <button onClick={() => handleEmailVerification(signupVerificationLink.split("/").pop())}>
+                Verify Email
+              </button>
             </div>
           )}
         </section>

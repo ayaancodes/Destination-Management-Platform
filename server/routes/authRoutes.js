@@ -13,10 +13,10 @@ const authRouter = express.Router();
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ errors: errors.array() });
     }
     next();
-  };
+};
 
 // Route for User Registration
 authRouter.post(
@@ -97,9 +97,25 @@ authRouter.post(
                 return res.status(400).json({ error: 'Invalid email or password.' });
             }
 
-            //Check if email is verified
+            // Check if user is active
+            if (user.status !== 'active') {
+                return res.status(403).json({
+                    error: 'Your account is deactivated. Please contact the administrator.',
+                });
+            }
+
+            // Check if email is verified
             if (!user.isVerified) {
-                return res.status(403).json({ error: 'Please verify your email!' })
+                // Generate a new verification link
+                const verificationToken = crypto.randomBytes(32).toString('hex');
+                user.verificationToken = verificationToken;
+                await user.save();
+
+                const verificationLink = `${req.protocol}://${req.get('host')}/api/verify-email/${verificationToken}`;
+                return res.status(403).json({
+                    error: 'Please verify your email!',
+                    verificationLink,
+                });
             }
 
             // Compare password
@@ -122,6 +138,7 @@ authRouter.post(
         }
     }
 );
+
 
 // Route: Change Password
 authRouter.put(
