@@ -3,9 +3,7 @@ const { body, param, validationResult } = require('express-validator');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const List = require('../models/List'); // MongoDB List model
 
-
 const listsRouter = express.Router();
-listsRouter.use(authenticateToken); // Apply middleware to all routes
 
 // Helper function to handle validation errors
 const handleValidationErrors = (req, res, next) => {
@@ -16,8 +14,7 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-
-//Route: Get all public lists with pagination
+// Route: Get all public lists with pagination (No authentication required)
 listsRouter.get('/public-lists', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -25,7 +22,9 @@ listsRouter.get('/public-lists', async (req, res) => {
     const skip = (page - 1) * limit;
 
     const publicLists = await List.find({ visibility: 'public' })
-      .populate('userId', 'nickname')
+      .populate('userId', 'nickname') // Populate the creator's nickname
+      .populate('destinationIds') // Populate destinations
+      .sort({ lastModified: -1 }) // Sort by last-modified date in descending order
       .skip(skip)
       .limit(limit);
 
@@ -42,6 +41,66 @@ listsRouter.get('/public-lists', async (req, res) => {
   }
 });
 
+
+// Route: Search for public lists (No authentication required)
+listsRouter.get('/search', async (req, res) => {
+  const { query } = req.query;
+
+  if (!query) {
+    return res.status(400).json({ error: 'Query parameter is required.' });
+  }
+
+  try {
+    const searchCriteria = {
+      visibility: 'public',
+      name: { $regex: query, $options: 'i' },
+    };
+
+    const results = await List.find(searchCriteria).populate('userId', 'nickname');
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'No public lists found matching the criteria.' });
+    }
+
+    res.status(200).json({ results });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+
+
+// Route: Fetch all visible reviews for a specific list 
+listsRouter.get(
+  '/:id/reviews',
+  param('id').isMongoId().withMessage('Invalid list ID.'),
+  authenticateToken,
+  handleValidationErrors,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Fetch the list and filter out hidden reviews
+      const list = await List.findById(id);
+      if (!list) {
+        return res.status(404).json({ error: 'List not found.' });
+      }
+
+      // Filter visible reviews
+      const visibleReviews = list.reviews.filter(review => !review.hidden);
+
+      res.json({ reviews: visibleReviews });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+  }
+);
+
+
+
+
 // Route: Rate a public list
 listsRouter.post(
   '/:id/rate',
@@ -49,6 +108,7 @@ listsRouter.post(
     param('id').isMongoId().withMessage('Invalid list ID.'),
     body('rating').isInt({ min: 1, max: 5 }).withMessage('Rating must be an integer between 1 and 5.'),
   ],
+  authenticateToken,
   handleValidationErrors,
   async (req, res) => {
     try {
@@ -99,6 +159,7 @@ listsRouter.post(
     param('id').isMongoId().withMessage('Invalid list ID.'),
     body('comment').isString().withMessage('Review comment must be a string.'),
   ],
+  authenticateToken,
   handleValidationErrors,
   async (req, res) => {
     try {
@@ -136,65 +197,6 @@ listsRouter.post(
 
 
 
-//Route: Search for public lists given a query
-listsRouter.get('/search', async (req, res) => {
-  const { query } = req.query;
-
-  // Check if the query parameter is provided
-  if (!query) {
-    return res.status(400).json({ error: 'Query parameter is required.' });
-  }
-
-  try {
-    // Search criteria for public lists only
-    const searchCriteria = {
-      visibility: 'public', // Ensure only public lists are included
-      name: { $regex: query, $options: 'i' }, // Case-insensitive search on list name
-    };
-
-    // Find matching lists and populate creator nickname
-    const results = await List.find(searchCriteria).populate('userId', 'nickname');
-
-    // Handle case where no lists match the criteria
-    if (results.length === 0) {
-      return res.status(404).json({ message: 'No public lists found matching the criteria.' });
-    }
-
-    // Send successful response
-    res.status(200).json({ results });
-  } catch (error) {
-    // Handle server error
-    console.error(error.message);
-    res.status(500).json({ error: 'Internal server error', details: error.message });
-  }
-});
-
-
-// Route: Fetch all visible reviews for a specific list
-listsRouter.get(
-  '/:id/reviews',
-  param('id').isMongoId().withMessage('Invalid list ID.'),
-  handleValidationErrors,
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-
-      // Fetch the list and filter out hidden reviews
-      const list = await List.findById(id);
-      if (!list) {
-        return res.status(404).json({ error: 'List not found.' });
-      }
-
-      // Filter visible reviews
-      const visibleReviews = list.reviews.filter(review => !review.hidden);
-
-      res.json({ reviews: visibleReviews });
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).json({ error: 'Internal server error', details: error.message });
-    }
-  }
-);
 
 
 
@@ -205,6 +207,7 @@ listsRouter.put(
     param('id').isMongoId().withMessage('Invalid list ID.'),
     body('comment').isString().withMessage('Review comment must be a string.'),
   ],
+  authenticateToken,
   handleValidationErrors,
   async (req, res) => {
     try {
@@ -242,6 +245,7 @@ listsRouter.put(
 listsRouter.delete(
   '/:id/review',
   param('id').isMongoId().withMessage('Invalid list ID.'),
+  authenticateToken,
   handleValidationErrors,
   async (req, res) => {
     try {
@@ -280,6 +284,8 @@ listsRouter.post(
     body('visibility').optional().customSanitizer(value => value.toLowerCase()).isIn(['public', 'private']),
   ],
   handleValidationErrors,
+  authenticateToken,
+
   async (req, res) => {
     try {
       const { name, description, destinationIds, visibility } = req.body;
@@ -334,6 +340,7 @@ listsRouter.put(
     body('visibility').optional().isIn(['public', 'private']),
   ],
   handleValidationErrors,
+  authenticateToken,
   async (req, res) => {
     try {
       const { id } = req.params;
@@ -359,6 +366,7 @@ listsRouter.put(
 listsRouter.delete(
   '/:id',
   param('id').isMongoId().withMessage('Invalid list ID.'),
+  authenticateToken,
   handleValidationErrors,
   async (req, res) => {
     try {
@@ -389,8 +397,9 @@ listsRouter.get(
     try {
       const { id } = req.params;
 
-      const list = await List.findOne({ _id: id, userId: req.user.userId });
-
+      const list = await List.findById(id)
+        .populate('destinationIds', 'name country'); // Populate destination details
+      console.log(list);
       if (!list) {
         return res.status(404).json({ message: 'List not found.' });
       }
@@ -402,6 +411,8 @@ listsRouter.get(
     }
   }
 );
+
+
 
 
 

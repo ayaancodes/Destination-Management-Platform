@@ -1,0 +1,73 @@
+.public-lists-container {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  
+  header {
+    margin-bottom: 20px;
+  }
+  
+  .lists-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .list-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+  }
+  
+  .list-card h3 {
+    color: #005f73;
+    margin-bottom: 10px;
+  }
+  
+  .list-card p {
+    margin: 5px 0;
+  }
+  
+  .list-card button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #94d2bd;
+    color: #001219;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  
+  .list-card button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .pagination-controls {
+    margin-top: 20px;
+  }
+  
+  .pagination-controls button {
+    padding: 10px 15px;
+    margin: 0 5px;
+    background-color: #e9d8a6;
+    color: #005f73;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .pagination-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .pagination-controls span {
+    margin: 0 10px;
+    font-weight: bold;
+  }
+  
