@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Import Pages
-import HomePage from './pages/HomePage';
+import LandingPage from './pages/LandingPage';
 import SearchPage from './pages/SearchPage';
 import PublicListsPage from './pages/PublicListsPage';
 import ListDetailsPage from './pages/ListDetailsPage';
@@ -16,7 +16,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/lists" element={<PublicListsPage />} />
         <Route path="/lists/:id" element={<ListDetailsPage />} />

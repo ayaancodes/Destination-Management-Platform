@@ -4,7 +4,6 @@ const { authenticateToken } = require('../middleware/authMiddleware');
 const Destination = require('../models/Destination'); // Import the Destination model
 
 const destinationsRouter = express.Router();
-destinationsRouter.use(authenticateToken);
 
 // Helper function to handle validation errors
 const handleValidationErrors = (req, res, next) => {
@@ -15,7 +14,7 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// Route: Get all unique countries
+// Route: Get all unique countries (No authentication required)
 destinationsRouter.get('/countries', async (req, res) => {
   try {
     const destinations = await Destination.find({}, 'country'); // Query MongoDB for country field
@@ -27,7 +26,7 @@ destinationsRouter.get('/countries', async (req, res) => {
   }
 });
 
-// Route: Get geographical coordinates for a destination by ID
+// Route: Get geographical coordinates for a destination by ID (No authentication required)
 destinationsRouter.get(
   '/coordinates/:id',
   param('id').isMongoId().withMessage('ID must be a valid MongoDB ObjectId.'),
@@ -50,7 +49,7 @@ destinationsRouter.get(
   }
 );
 
-// Route: Search destinations by field and pattern
+// Route: Search destinations by field and pattern (No authentication required)
 destinationsRouter.get(
   '/search',
   [
@@ -85,7 +84,7 @@ destinationsRouter.get(
   }
 );
 
-// Route: Get all destinations
+// Route: Get all destinations (No authentication required)
 destinationsRouter.get('/', async (req, res) => {
   try {
     const destinations = await Destination.find(); // Fetch all destinations
@@ -96,7 +95,7 @@ destinationsRouter.get('/', async (req, res) => {
   }
 });
 
-// Route: Get a destination by ID
+// Route: Get a destination by ID (No authentication required)
 destinationsRouter.get(
   '/:id',
   param('id').isMongoId().withMessage('ID must be a valid MongoDB ObjectId.'),
@@ -116,5 +115,6 @@ destinationsRouter.get(
     }
   }
 );
+
 
 module.exports = destinationsRouter;
