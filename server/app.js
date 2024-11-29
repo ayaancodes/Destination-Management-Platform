@@ -1,6 +1,7 @@
 //This file handles Express setup, middleware, and routes
 
 const express = require('express');
+const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const destinationsRouter = require('./routes/destinationsRoutes');
@@ -13,6 +14,11 @@ const adminRouter = require('./routes/adminRoutes');
 
 
 const app = express();
+
+//Enable Cors
+app.use(cors());
+
+
 
 // Middleware to parse JSON and limit request size
 app.use(express.json({ limit: '10kb' }));
