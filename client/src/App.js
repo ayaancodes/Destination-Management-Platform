@@ -5,11 +5,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Home from './pages/Home';
 import SearchPage from './pages/SearchPage';
+import AddDestinationPage from './pages/AddDestinationPage';
 import PublicListsPage from './pages/PublicListsPage';
 import ListDetailsPage from './pages/ListDetailsPage';
 import DashboardPage from './pages/DashboardPage';
 import AdminPanel from './pages/AdminPanel';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import UserListsPage from "./pages/UserListsPage";
+import CreateListPage from "./pages/CreateListPage";
 import AcceptableUsePolicy from './pages/AcceptableUsePolicy';
 import DMCA from './pages/DMCA';
 
@@ -21,8 +24,11 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/lists" element={<PublicListsPage />} />
+        <Route path="/my-lists" element={<UserListsPage />} />
+        <Route path="/lists/:id/add-destination" element={<AddDestinationPage />} />
+        <Route path="/create-list" element={<CreateListPage />} />
         <Route path="/lists/:id" element={<ListDetailsPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />s
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/acceptable-use-policy" element={<AcceptableUsePolicy />} />

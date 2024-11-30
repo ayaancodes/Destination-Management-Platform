@@ -41,6 +41,30 @@ listsRouter.get('/public-lists', async (req, res) => {
   }
 });
 
+// Route: Get all lists created by the authenticated user
+// Route: Get all lists created by the authenticated user
+listsRouter.get('/my-lists', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId; // Extract userId from the authenticated token
+
+    // Find all lists created by the user and populate destination details
+    const userLists = await List.find({ userId })
+      .sort({ lastModified: -1 })
+      .populate('destinationIds', 'name country'); // Populate destination details
+
+    if (!userLists || userLists.length === 0) {
+      return res.status(404).json({ message: 'No lists found for this user.' });
+    }
+
+    res.json(userLists);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+
+
 
 // Route: Search for public lists (No authentication required)
 listsRouter.get('/search', async (req, res) => {
@@ -274,6 +298,9 @@ listsRouter.delete(
 );
 
 
+
+
+
 // Route: Create a new list
 listsRouter.post(
   '/',
@@ -285,21 +312,24 @@ listsRouter.post(
   ],
   handleValidationErrors,
   authenticateToken,
-
   async (req, res) => {
     try {
       const { name, description, destinationIds, visibility } = req.body;
+      const userId = req.user.userId; // Extract userId from the authenticated token
 
-      // Extract userId from authenticated token
-      const userId = req.user.userId;
+      // Check if a list with the same name exists for the user
+      const existingList = await List.findOne({ userId, name });
+      if (existingList) {
+        return res.status(400).json({ error: 'You already have a list with this name. Please choose a unique name.' });
+      }
 
       // Create the list
       const newList = new List({
-        userId, // Attach userId from token
+        userId,
         name,
         description,
         destinationIds,
-        visibility,
+        visibility: visibility || 'private', // Default visibility is 'private'
       });
 
       await newList.save();
@@ -311,6 +341,7 @@ listsRouter.post(
     }
   }
 );
+
 
 // Route: Retrieve all lists for the authenticated user
 listsRouter.get('/', async (req, res) => {
@@ -414,6 +445,27 @@ listsRouter.get(
 
 
 
+listsRouter.post('/:id/add-destination', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const { destinationId } = req.body;
+
+  try {
+    const list = await List.findOneAndUpdate(
+      { _id: id, userId: req.user.userId },
+      { $addToSet: { destinationIds: destinationId } }, // Prevent duplicate destination IDs
+      { new: true }
+    ).populate('destinationIds', 'name country');
+
+    if (!list) {
+      return res.status(404).json({ error: 'List not found or you do not have permission to modify it.' });
+    }
+
+    res.status(200).json({ message: 'Destination added successfully.', list });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
 
 
 

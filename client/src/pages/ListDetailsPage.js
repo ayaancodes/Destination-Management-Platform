@@ -13,7 +13,6 @@ const ListDetailsPage = () => {
     useEffect(() => {
         fetchListDetails();
     }, [id]);
-
     const fetchListDetails = async () => {
         setLoading(true);
         try {
@@ -37,6 +36,10 @@ const ListDetailsPage = () => {
                 <button onClick={() => navigate("/lists")} className="back-button">
                     Back to Public Lists
                 </button>
+                <button onClick={() => navigate(`/lists/${listDetails._id}/add-destination`)}>
+                    Add Destinations
+                </button>
+
             </header>
 
             <main>
@@ -60,13 +63,14 @@ const ListDetailsPage = () => {
                             {listDetails.destinationIds && listDetails.destinationIds.length > 0 ? (
                                 listDetails.destinationIds.map((destination) => (
                                     <li key={destination._id}>
-                                        {destination.name} ({destination.country})
+                                        <strong>{destination.name}</strong> - {destination.country}
                                     </li>
                                 ))
                             ) : (
                                 <p>No destinations available.</p>
                             )}
                         </ul>
+
 
 
                     </section>
