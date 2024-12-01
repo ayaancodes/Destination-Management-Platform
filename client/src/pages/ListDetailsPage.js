@@ -66,7 +66,7 @@ const ListDetailsPage = () => {
             return;
         }
         try {
-            const response = await axios.post(
+            await axios.post(
                 `http://localhost:3000/api/lists/${id}/review`,
                 { comment: newReview, rating: newRating },
                 {
@@ -83,13 +83,34 @@ const ListDetailsPage = () => {
         }
     };
 
+    // Delete the list
+    const deleteList = async () => {
+        const confirmed = window.confirm("Are you sure you want to delete this list?");
+        if (!confirmed) {
+            return; // Exit if confirmation is declined
+        }
+
+        try {
+            await axios.delete(`http://localhost:3000/api/lists/${id}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            alert("List deleted successfully.");
+            navigate("/dashboard"); // Navigate back to dashboard
+        } catch (err) {
+            setError(err.response?.data?.error || "Failed to delete the list.");
+        }
+    };
+
     return (
         <div className="list-details-container">
             <header>
                 <h1>List Details</h1>
-                <button onClick={() => navigate(`/dashboard`)}>
-                    Back to Searching
-                </button>
+                <button onClick={() => navigate(`/dashboard`)}>Back to Searching</button>
+                {listDetails && (
+                    <button onClick={deleteList} className="delete-button">
+                        Delete List
+                    </button>
+                )}
             </header>
 
             <main>
@@ -107,7 +128,8 @@ const ListDetailsPage = () => {
                             <strong>Description:</strong> {listDetails.description || "No description provided."}
                         </p>
                         <p>
-                            <strong>Average Rating:</strong> {listDetails.averageRating !== undefined ? listDetails.averageRating : "N/A"}
+                            <strong>Average Rating:</strong>{" "}
+                            {listDetails.averageRating !== undefined ? listDetails.averageRating : "N/A"}
                         </p>
                         <h3>Destinations</h3>
                         <ul>
