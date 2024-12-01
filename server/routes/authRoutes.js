@@ -214,6 +214,21 @@ authRouter.get('/verify-email/:token', async (req, res) => {
 });
 
 
+// Route: Get current user details
+authRouter.get('/me', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId).select('email nickname role status');
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 
 
 module.exports = authRouter;

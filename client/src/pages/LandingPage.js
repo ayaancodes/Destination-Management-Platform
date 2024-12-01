@@ -26,7 +26,18 @@ const LandingPage = () => {
     try {
       const response = await axios.post("http://localhost:3000/api/open/login", loginData);
       localStorage.setItem("token", response.data.token);
-      navigate("/dashboard");
+
+      // Fetch user details to determine role
+      const userResponse = await axios.get("http://localhost:3000/api/me", {
+        headers: { Authorization: `Bearer ${response.data.token}` },
+      });
+
+      // Redirect based on user role
+      if (userResponse.data.role === "admin") {
+        navigate("/adminview");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error) {
       if (error.response?.status === 403) {
         const data = error.response.data;
@@ -39,6 +50,7 @@ const LandingPage = () => {
       }
     }
   };
+
 
   const handleSignup = async (e) => {
     e.preventDefault();

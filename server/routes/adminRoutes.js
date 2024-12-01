@@ -122,3 +122,18 @@ adminRouter.put(
 );
 
 module.exports = adminRouter;
+
+// Route: Get all users
+adminRouter.get(
+  '/users',
+  authorizeAdmin,
+  async (req, res) => {
+    try {
+      const users = await User.find({}, "name email status role");
+      res.json(users);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: 'Internal server error.' });
+    }
+  }
+);

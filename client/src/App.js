@@ -14,6 +14,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import UserListsPage from "./pages/UserListsPage";
 import CreateListPage from "./pages/CreateListPage";
 import AcceptableUsePolicy from './pages/AcceptableUsePolicy';
+import AdminPage from './pages/AdminPage';
 import DMCA from './pages/DMCA';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/home" element={<Home />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/adminView" element={<AdminPage />} />
         <Route path="/lists" element={<PublicListsPage />} />
         <Route path="/my-lists" element={<UserListsPage />} />
         <Route path="/lists/:id/add-destination" element={<AddDestinationPage />} />
