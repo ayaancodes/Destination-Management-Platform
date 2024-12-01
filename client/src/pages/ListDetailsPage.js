@@ -8,7 +8,10 @@ const ListDetailsPage = () => {
     const navigate = useNavigate(); // Navigation hook
     const [listDetails, setListDetails] = useState(null); // Store list details
     const [reviews, setReviews] = useState([]); // Store reviews
+    const [newReview, setNewReview] = useState(""); // New review comment
+    const [newRating, setNewRating] = useState(1); // New review rating
     const [error, setError] = useState(""); // Error state
+    const [success, setSuccess] = useState(""); // Success state
     const [loading, setLoading] = useState(false); // Loading state
 
     useEffect(() => {
@@ -56,6 +59,29 @@ const ListDetailsPage = () => {
         }
     };
 
+    // Add a new review
+    const addReview = async () => {
+        if (!newReview.trim()) {
+            setError("Review comment cannot be empty.");
+            return;
+        }
+        try {
+            const response = await axios.post(
+                `http://localhost:3000/api/lists/${id}/review`,
+                { comment: newReview, rating: newRating },
+                {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                }
+            );
+            setSuccess("Review added successfully!");
+            setError("");
+            setNewReview(""); // Clear the review input
+            setNewRating(1); // Reset the rating
+            fetchReviews(); // Refresh the reviews
+        } catch (err) {
+            setError(err.response?.data?.error || "Failed to add the review.");
+        }
+    };
 
     return (
         <div className="list-details-container">
@@ -69,6 +95,7 @@ const ListDetailsPage = () => {
             <main>
                 {loading && <p>Loading list details...</p>}
                 {error && <p className="error">{error}</p>}
+                {success && <p className="success">{success}</p>}
 
                 {listDetails && (
                     <section className="expanded-list-section">
@@ -80,9 +107,7 @@ const ListDetailsPage = () => {
                             <strong>Description:</strong> {listDetails.description || "No description provided."}
                         </p>
                         <p>
-                            <p>
-                                <strong>Average Rating:</strong> {listDetails.averageRating !== undefined ? listDetails.averageRating : "N/A"}
-                            </p>
+                            <strong>Average Rating:</strong> {listDetails.averageRating !== undefined ? listDetails.averageRating : "N/A"}
                         </p>
                         <h3>Destinations</h3>
                         <ul>
@@ -124,6 +149,32 @@ const ListDetailsPage = () => {
 
                 {/* Message if there are no reviews */}
                 {reviews.length === 0 && <p>No reviews available for this list.</p>}
+
+                {/* Add Review Section */}
+                <section className="add-review-section">
+                    <h3>Add a Review</h3>
+                    <label>
+                        Rating:
+                        <select value={newRating} onChange={(e) => setNewRating(parseInt(e.target.value, 10))}>
+                            {[1, 2, 3, 4, 5].map((rating) => (
+                                <option key={rating} value={rating}>
+                                    {rating}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                    <br />
+                    <label>
+                        Comment:
+                        <textarea
+                            value={newReview}
+                            onChange={(e) => setNewReview(e.target.value)}
+                            placeholder="Enter your review here"
+                        />
+                    </label>
+                    <br />
+                    <button onClick={addReview}>Submit Review</button>
+                </section>
             </main>
         </div>
     );
