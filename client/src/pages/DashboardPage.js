@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Fuse from "fuse.js";
-import "../styles/HomePage.css"; // Use existing styles
+import "../styles/HomePage.css";
 
 const DashboardPage = () => {
   const [searchField, setSearchField] = useState("country"); // Search by country, city, or name
@@ -14,6 +14,7 @@ const DashboardPage = () => {
   const [error, setError] = useState(""); // Error message
   const [success, setSuccess] = useState(""); // Success message
   const [loading, setLoading] = useState(false); // Loading state
+  const [deletingList, setDeletingList] = useState(null); // List being deleted
 
   const navigate = useNavigate();
 
@@ -88,6 +89,22 @@ const DashboardPage = () => {
       setSelectedDestination(null); // Clear selected destination
     } catch (err) {
       setError(err.response?.data?.error || "Failed to add destination.");
+    }
+  };
+
+  // Delete a list
+  const handleDeleteList = async (listId) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/lists/${listId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setSuccess("List deleted successfully.");
+      setError("");
+      fetchUserLists(); // Refresh the lists
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to delete list.");
+    } finally {
+      setDeletingList(null); // Clear the deleting state
     }
   };
 
@@ -172,6 +189,16 @@ const DashboardPage = () => {
               <h3>{list.name}</h3>
               <p>{list.description}</p>
               <button onClick={() => navigate(`/lists/${list._id}`)}>View Details</button>
+              <button
+                onClick={() => {
+                  if (window.confirm(`Are you sure you want to delete "${list.name}"?`)) {
+                    handleDeleteList(list._id);
+                  }
+                }}
+                className="delete-list-button"
+              >
+                Delete
+              </button>
             </div>
           ))}
         </section>
