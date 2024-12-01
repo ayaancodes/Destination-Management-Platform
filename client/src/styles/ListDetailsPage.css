@@ -216,3 +216,112 @@ header p {
     font-weight: bold;
     color: #2980b9;
 }
+
+/* ListDetailsPage.css */
+
+.list-details-container {
+    font-family: Arial, sans-serif;
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 800px;
+    background-color: #f9f9f9; /* Subtle background color */
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  header h1 {
+    font-size: 2rem;
+    color: #004080; /* Dark blue for title */
+  }
+  
+  header button {
+    background-color: #007acc; /* Matching the colorway */
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  header button:hover {
+    background-color: #005999; /* Slightly darker blue */
+  }
+  
+  .expanded-list-section,
+  .reviews-section {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+  
+  .expanded-list-section h2,
+  .reviews-section h3 {
+    color: #004080; /* Dark blue headings */
+    border-bottom: 2px solid #007acc;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  ul li {
+    margin-bottom: 10px;
+  }
+  
+  ul li strong {
+    color: #007acc; /* Highlighted text in matching blue */
+  }
+  
+  .review-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: #f1f7ff; /* Light blue for review cards */
+  }
+  
+  .review-card p {
+    margin: 5px 0;
+  }
+  
+  .review-card strong {
+    color: #004080; /* Darker blue for usernames */
+  }
+  
+  .error {
+    color: #cc0000; /* Error message in red */
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  button.add-destination-button {
+    background-color: #007acc;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button.add-destination-button:hover {
+    background-color: #005999;
+  }
+  
