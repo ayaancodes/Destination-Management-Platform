@@ -121,7 +121,19 @@ adminRouter.put(
   }
 );
 
-module.exports = adminRouter;
+// Route: Get all public lists with their reviews
+adminRouter.get('/public-lists', authorizeAdmin, async (req, res) => {
+  try {
+    const publicLists = await List.find({ visibility: 'public' })
+      .populate('userId', 'nickname')
+      .populate('reviews.userId', 'nickname');
+
+    res.json({ lists: publicLists });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Route: Get all users
 adminRouter.get(
@@ -137,3 +149,7 @@ adminRouter.get(
     }
   }
 );
+
+
+module.exports = adminRouter;
+

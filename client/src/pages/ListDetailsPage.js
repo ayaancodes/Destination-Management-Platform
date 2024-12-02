@@ -127,10 +127,7 @@ const ListDetailsPage = () => {
                         <p>
                             <strong>Description:</strong> {listDetails.description || "No description provided."}
                         </p>
-                        <p>
-                            <strong>Average Rating:</strong>{" "}
-                            {listDetails.averageRating !== undefined ? listDetails.averageRating : "N/A"}
-                        </p>
+
                         <h3>Destinations</h3>
                         <ul>
                             {listDetails.destinationIds && listDetails.destinationIds.length > 0 ? (

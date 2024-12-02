@@ -8,6 +8,7 @@ import SearchPage from './pages/SearchPage';
 import AddDestinationPage from './pages/AddDestinationPage';
 import PublicListsPage from './pages/PublicListsPage';
 import ListDetailsPage from './pages/ListDetailsPage';
+import AdminPublicListsPage from './pages/AdminPublicListsPage'
 import DashboardPage from './pages/DashboardPage';
 import AdminPanel from './pages/AdminPanel';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -26,6 +27,7 @@ function App() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/adminView" element={<AdminPage />} />
         <Route path="/lists" element={<PublicListsPage />} />
+        <Route path="/public-lists" element={<AdminPublicListsPage />} />
         <Route path="/my-lists" element={<UserListsPage />} />
         <Route path="/lists/:id/add-destination" element={<AddDestinationPage />} />
         <Route path="/create-list" element={<CreateListPage />} />
