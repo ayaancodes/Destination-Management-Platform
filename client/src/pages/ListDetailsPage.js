@@ -1,26 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/ListDetailsPage.css";
 
 const ListDetailsPage = () => {
-    const { id } = useParams(); // Get the list ID from the route parameter
-    const navigate = useNavigate(); // Navigation hook
-    const [listDetails, setListDetails] = useState(null); // Store list details
-    const [reviews, setReviews] = useState([]); // Store reviews
-    const [newReview, setNewReview] = useState(""); // New review comment
-    const [newRating, setNewRating] = useState(1); // New review rating
-    const [error, setError] = useState(""); // Error state
-    const [success, setSuccess] = useState(""); // Success state
-    const [loading, setLoading] = useState(false); // Loading state
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [listDetails, setListDetails] = useState(null);
+    const [reviews, setReviews] = useState([]);
+    const [newReview, setNewReview] = useState("");
+    const [newRating, setNewRating] = useState(1);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        fetchListDetails();
-        fetchReviews();
-    }, [id]);
-
-    // Fetch list details
-    const fetchListDetails = async () => {
+    const fetchListDetails = useCallback(async () => {
         setLoading(true);
         try {
             const response = await axios.get(`http://localhost:3000/api/lists/${id}`);
@@ -31,10 +25,9 @@ const ListDetailsPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
-    // Fetch reviews for the list
-    const fetchReviews = async () => {
+    const fetchReviews = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:3000/api/lists/${id}/reviews`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -43,12 +36,10 @@ const ListDetailsPage = () => {
             setReviews(fetchedReviews);
             setError("");
 
-            // Calculate average rating
             if (fetchedReviews.length > 0) {
                 const totalRating = fetchedReviews.reduce((sum, review) => sum + (review.rating || 0), 0);
-                const averageRating = (totalRating / fetchedReviews.length).toFixed(1); // One decimal place
+                const averageRating = (totalRating / fetchedReviews.length).toFixed(1);
 
-                // Update listDetails with calculated average rating
                 setListDetails((prevDetails) => ({
                     ...prevDetails,
                     averageRating,
@@ -57,7 +48,13 @@ const ListDetailsPage = () => {
         } catch (err) {
             setError(err.response?.data?.error || "Failed to fetch reviews.");
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        fetchListDetails();
+        fetchReviews();
+    }, [fetchListDetails, fetchReviews]);
+
 
     // Add a new review
     const addReview = async () => {

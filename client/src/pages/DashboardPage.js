@@ -133,6 +133,8 @@ const DashboardPage = () => {
           >
             Create New List
           </button>
+
+
         </section>
 
 
@@ -145,8 +147,8 @@ const DashboardPage = () => {
               onChange={(e) => setSearchField(e.target.value)}
             >
               <option value="country">Country</option>
-              <option value="city">City</option>
-              <option value="name">Name</option>
+              <option value="city">Name</option>
+              <option value="name">City</option>
             </select>
             <input
               type="text"
@@ -186,6 +188,17 @@ const DashboardPage = () => {
                 disabled={!selectedList}
               >
                 Add
+              </button>
+              <button
+                className="ddg-search-button"
+                onClick={() =>
+                  window.open(
+                    `https://duckduckgo.com/?q=${encodeURIComponent(destination.name)}`,
+                    "_blank"
+                  )
+                }
+              >
+                Search on DDG
               </button>
             </div>
           ))}

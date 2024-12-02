@@ -429,7 +429,9 @@ listsRouter.get(
       const { id } = req.params;
 
       const list = await List.findById(id)
-        .populate('destinationIds', 'name country'); // Populate destination details
+        .populate('destinationIds', 'name country') // Populate destination details
+        .populate('userId', 'nickname name email'); // Populate user details
+        
       console.log(list);
       if (!list) {
         return res.status(404).json({ message: 'List not found.' });

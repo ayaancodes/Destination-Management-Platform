@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/LandingPage.css";
 import axios from "axios";
+import { Link } from "react-router-dom";
+
 
 const LandingPage = () => {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -165,6 +167,13 @@ const LandingPage = () => {
 
         {emailVerified && <p className="success-message">Email verified successfully! You can now log in.</p>}
         {authError && <p className="error-message">{authError}</p>}
+
+        <footer className="footer">
+          <Link to="/privacy-policy" className="footer-link">Privacy Policy</Link>
+          <Link to="/dmca-policy" className="footer-link">DMCA Notice</Link>
+          <Link to="/acceptable-use-policy" className="footer-link">Acceptable Use Policy</Link>
+
+        </footer>
       </main>
     </div>
   );
