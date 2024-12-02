@@ -1,0 +1,178 @@
+commit b8af6d3cf93bf738428a9a3dba4ad209db00c6b5
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sun Dec 1 23:42:29 2024 -0500
+
+    Completed Final Code
+
+commit f2f87d7681abe3004c1aa9874325026cf0eccbfd
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sun Dec 1 22:29:12 2024 -0500
+
+    Implemented Hiding/Unhiding Lists
+
+commit 477efe2d8d237bccef01805f8bb0fdf988f0d997
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sun Dec 1 06:25:49 2024 -0500
+
+    Implemented Admin Routes
+
+commit 606e0cacb0b896cf5eca698edc5cc09936567d8f
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sun Dec 1 05:07:38 2024 -0500
+
+    Updated Home.js
+
+commit 50bc8001865413b0fed6da7a2065abf79effc831
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sun Dec 1 03:26:08 2024 -0500
+
+    Add deleted list functionality
+
+commit deedb91b1cb84403483148cdc00dfb5403661396
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sun Dec 1 00:52:17 2024 -0500
+
+    Review & Rate added on List
+
+commit f35c3a1d8a22227328fcdf6d6a6efe26ae662a92
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sun Dec 1 00:49:13 2024 -0500
+
+    Implemented adding lists
+
+commit cf1404e8ae28b7b3e8777367a4c78fc0334d5feb
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sat Nov 30 20:56:46 2024 -0500
+
+    Implemented List Deletion Functionality
+
+commit 39a661c660d1bc2723fa8b87db82b31d6fe096a1
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Fri Nov 29 20:46:46 2024 -0500
+
+    Implemented Create List Functionality in Frontend
+
+commit 3357dad35d63a7252a7552f8b788564e44876d92
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Fri Nov 29 06:13:19 2024 -0500
+
+    Display public lists with pagination, destination details, and error handling
+
+commit 916aa297f5c2cb517378f51fd659984491d00913
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Fri Nov 29 02:40:23 2024 -0500
+
+    Implemented Functionality to Search Public Destinations
+
+commit 48748662835e64ca19b94ff7f1f7fd3650d9e985
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Fri Nov 29 01:50:57 2024 -0500
+
+    Implemented some of the Home Page Introductions
+
+commit 1591a5e8ddd4d9eb73e192d0dabbfcd20ea87976
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Fri Nov 29 01:39:42 2024 -0500
+
+    Implemented Landing Login & Sign Up Page w/Logic
+
+commit a1e95cf3d3cc9618e1a3e1792435aec74c87e48c
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Thu Nov 28 20:23:46 2024 -0500
+
+    Implemented Login, Registration, & Disabled Account Management
+
+commit 7e8ea571aed8d73fe7f624ff6c7c0e42e08cea50
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Thu Nov 28 19:32:47 2024 -0500
+
+    Added Frontend Folder & Implemented Registration & Login
+
+commit f13d9dfb7cbef8761e727967aca72e555d25541a
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Thu Nov 28 17:40:49 2024 -0500
+
+    Backend Completed
+
+commit 2518d45cffde8f2274b81995637b16246a700935
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Thu Nov 28 17:28:58 2024 -0500
+
+    Completed Backend Functionality
+    
+    Added change password functionality
+    Implmeneted Admin Routes
+    
+    Fixed up the list and review model mess up
+
+commit 6e3f1a120b591e6e62ff4ee67fd79df78f8938c9
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Thu Nov 21 19:46:45 2024 -0500
+
+    Implemented Search Functionality for Lists
+
+commit 830881fa20ce816497fdf0257df888ba085d0ec4
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Thu Nov 21 19:34:34 2024 -0500
+
+    Implemented Review Functionality for Lists
+
+commit 02253d5c304ff60c7c07bd7d4dd84a2f445cbe1d
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Thu Nov 21 18:57:19 2024 -0500
+
+    Implemented Functionality Rating Lists
+
+commit 6510c4a93a1f688a4c36e539a530238a535be24c
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Thu Nov 21 17:53:47 2024 -0500
+
+    Implemented authenticated functionality for list routes
+
+commit 95175d72074af95bb7559e69ea116ea73beda264
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Thu Nov 21 16:34:17 2024 -0500
+
+    Implemented Authentication on Destinations Routes
+
+commit 4288a446354ec3c778b2a8f778cebc010e44070b
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Wed Nov 20 01:56:40 2024 -0500
+
+    First phase of user authentication implementation
+
+commit 678a44dba631829b89b8ee1a0336da9cf1be3ee5
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Tue Nov 19 23:18:55 2024 -0500
+
+    Connected CSV to Database and Set Up Routing
+
+commit 32ecffb67f350d0f1edb42f2bca05a75a22ebaa2
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Tue Nov 19 19:57:07 2024 -0500
+
+    Added Database Models
+
+commit 34432408bc4a0fb18ff4d6aaafda6425664d0e4f
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sun Nov 17 20:34:20 2024 -0500
+
+    Initialized MongoDB & Organized Backend
+
+commit 5208fc2236684c904ddd0168fb3eb42975cc3561
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sun Nov 17 19:40:57 2024 -0500
+
+    Migrated Old Backend Files
+
+commit 5052f73a828b10a32447dabf4ef8bf78bf414628
+Author: Ayaan Munshi <ayaanmunshi456@gmail.com>
+Date:   Sun Nov 17 19:39:02 2024 -0500
+
+    Initial Commit - Migrated Lab3 Backend Files
+
+commit ee4a23e57318e3f0731160c1bb115ffb7c54e069
+Author: github-classroom[bot] <66690702+github-classroom[bot]@users.noreply.github.com>
+Date:   Sun Nov 3 23:57:54 2024 +0000
+
+    Initial commit

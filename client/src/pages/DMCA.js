@@ -17,7 +17,7 @@ const DMCA = () => {
       </ul>
       <h2>Contact Us</h2>
       <p>
-        Please send your notice to [Your Contact Information].
+        Please send your notice to Western University.
       </p>
     </div>
   );

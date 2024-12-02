@@ -1,1 +1,50 @@
 # Record all AI tools and prompts that you used to create substantial amounts of code.
+Prompt:
+"Generate a detailed API documentation template for an admin dashboard, including routes for managing users, toggling reviews, and viewing public lists. Include request formats, response formats, and sample errors."
+Answer :
+"Here is a structured API documentation template including sample JSON requests and responses..."
+
+Prompt:
+"Explain how to securely handle JWT tokens in both React frontend and Express backend, considering security best practices."
+Answer :
+"Here are the best practices for handling JWT tokens securely across React and Express applications..."
+
+Prompt:
+"Provide a React component to display a paginated list of items fetched from an API. Include hooks for managing state and error handling."
+Answer :
+"Here is a React component that implements pagination and handles API calls with hooks..."
+
+Prompt:
+"Create a concise checklist for debugging common React errors related to hooks, dependencies, and rendering issues."
+Answer :
+"Here's a checklist for debugging React issues: 1. Verify hook dependencies..."
+
+Prompt:
+"Explain the difference between React Router's <Link> and useNavigate, and when to use each in a project."
+Answer :
+"React Router's <Link> is used for declarative navigation in JSX, while useNavigate is used programmatically in event handlers..."
+
+Prompt:
+"Write a utility function in Node.js to hash passwords with bcrypt and validate them during login."
+Answer :
+"Here’s a utility function to hash passwords and validate them using bcrypt..."
+
+Prompt:
+"Describe how to implement a middleware in Express to check user roles and redirect non-admin users appropriately."
+Answer :
+"Here’s an implementation for an Express middleware to validate user roles and redirect as needed..."
+
+Prompt:
+"List the advantages of using axios over the native Fetch API in React for handling API requests, with examples."
+Answer :
+"Axios provides these advantages over Fetch: automatic JSON parsing, simplified request cancellation, etc..."
+
+Prompt:
+"Explain how to use the useEffect hook with async functions in React, avoiding race conditions and memory leaks."
+Answer :
+"When using useEffect with async functions, follow this pattern to avoid race conditions..."
+
+Prompt:
+"Generate an example of a unit test for a React component that toggles visibility based on a button click."
+Answer :
+"Here’s a unit test using React Testing Library to verify visibility toggling..."
